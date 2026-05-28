@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kongroo.Payments.Api/Kongroo.Payments.Api.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/">
+    <Project Path="tests/Kongroo.Payments.UnitTests/Kongroo.Payments.UnitTests.csproj" />
+  </Folder>
+</Solution>
