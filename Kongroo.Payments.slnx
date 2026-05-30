@@ -1,9 +1,12 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Kongroo.BuildingBlocks/Kongroo.BuildingBlocks.csproj" />
     <Project Path="src/Kongroo.Payments.Api/Kongroo.Payments.Api.csproj" />
   </Folder>
 
   <Folder Name="/tests/">
     <Project Path="tests/Kongroo.Payments.UnitTests/Kongroo.Payments.UnitTests.csproj" />
+    <Project Path="tests/Kongroo.Payments.IntegrationTests/Kongroo.Payments.IntegrationTests.csproj" />
+    <Project Path="tests/Kongroo.Payments.Specs/Kongroo.Payments.Specs.csproj" />
   </Folder>
 </Solution>
