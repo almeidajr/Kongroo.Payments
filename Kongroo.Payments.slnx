@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Kongroo.BuildingBlocks/Kongroo.BuildingBlocks.csproj" />
+    <Project Path="src/Kongroo.Payments/Kongroo.Payments.csproj" />
     <Project Path="src/Kongroo.Payments.Api/Kongroo.Payments.Api.csproj" />
   </Folder>
 
