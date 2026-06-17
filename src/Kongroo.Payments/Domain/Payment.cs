@@ -32,6 +32,8 @@ public sealed class Payment : Entity<PaymentId>
         ArgumentNullException.ThrowIfNull(orderId);
         ArgumentNullException.ThrowIfNull(customerId);
         ArgumentNullException.ThrowIfNull(total);
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(customerName);
 
         return new Payment
         {

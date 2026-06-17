@@ -45,6 +45,7 @@ public sealed class PaymentTests
         raised.CustomerId.ShouldBe(AnyCustomer);
         raised.Email.ShouldBe("grace@example.com");
         raised.CustomerName.ShouldBe("Grace Hopper");
+        raised.Total.ShouldBe(Money.From(100m, Currency.Brl));
         raised.ProcessedAt.ShouldBe(ProcessedAt);
     }
 
@@ -56,6 +57,7 @@ public sealed class PaymentTests
         payment.Process(new FixedPolicy(approved: false), ProcessedAt);
 
         payment.Status.ShouldBe(PaymentStatus.Rejected);
+        payment.ProcessedAt.ShouldBe(ProcessedAt);
         payment.DomainEvents.OfType<PaymentProcessedDomainEvent>().Single().Approved.ShouldBeFalse();
     }
 
@@ -68,5 +70,28 @@ public sealed class PaymentTests
         var act = () => payment.Process(new FixedPolicy(approved: true), ProcessedAt);
 
         Should.Throw<ConflictException>(act);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void ForOrder_WhenEmailIsNullOrWhiteSpace_Throws(string? email)
+    {
+        var act = () => Payment.ForOrder(AnyOrder, AnyCustomer, email!, "Grace Hopper", Money.From(100m, Currency.Brl));
+
+        Should.Throw<ArgumentException>(act);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void ForOrder_WhenCustomerNameIsNullOrWhiteSpace_Throws(string? customerName)
+    {
+        var act = () =>
+            Payment.ForOrder(AnyOrder, AnyCustomer, "grace@example.com", customerName!, Money.From(100m, Currency.Brl));
+
+        Should.Throw<ArgumentException>(act);
     }
 }
