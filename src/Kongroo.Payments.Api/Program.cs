@@ -6,8 +6,11 @@ using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
 using Kongroo.BuildingBlocks;
 using Kongroo.BuildingBlocks.Presentation.Authorization;
+using Kongroo.Payments;
 using Kongroo.Payments.Api;
 using Kongroo.Payments.Api.OpenApi;
+using Kongroo.Payments.Infrastructure;
+using Kongroo.Payments.Presentation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -47,7 +50,12 @@ builder.Services.AddValidation();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 
-builder.Services.AddHealthChecks().AddApplicationLifecycleHealthCheck().AddResourceUtilizationHealthCheck();
+builder
+    .Services.AddHealthChecks()
+    .AddApplicationLifecycleHealthCheck()
+    .AddResourceUtilizationHealthCheck()
+    .AddNpgSql(_ => builder.Configuration.GetConnectionString("Database")!)
+    .AddDbContextCheck<PaymentsDbContext>();
 
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -77,6 +85,7 @@ builder
     .AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole("Admin"));
 
 builder.Services.AddBuildingBlocks(builder.Configuration);
+builder.Services.AddPaymentsModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -88,6 +97,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHealthChecks("health", new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse });
+app.MapPaymentEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
