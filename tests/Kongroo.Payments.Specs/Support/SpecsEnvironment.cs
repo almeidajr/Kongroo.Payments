@@ -1,3 +1,4 @@
+using Kongroo.Payments.Contracts;
 using MassTransit;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
@@ -58,7 +59,7 @@ public static class SpecsEnvironment
             _captureEndpoint = Bus.ConnectReceiveEndpoint(
                 "specs-payment-processed",
                 configurator =>
-                    configurator.Handler<Kongroo.BuildingBlocks.Contracts.PaymentProcessedIntegrationEvent>(context =>
+                    configurator.Handler<PaymentProcessedIntegrationEvent>(context =>
                     {
                         PublishedEvents.PaymentProcessed.Add(context.Message);
                         return Task.CompletedTask;

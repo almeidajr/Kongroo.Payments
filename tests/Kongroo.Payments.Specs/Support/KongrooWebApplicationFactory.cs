@@ -18,8 +18,6 @@ public sealed class KongrooWebApplicationFactory(string brokerHost, int brokerPo
                     ["Jwt:Issuer"] = "Kongroo.Payments.Specs",
                     ["Jwt:Audience"] = "Kongroo.Payments.Specs",
                     ["Jwt:SigningKey"] = "Kongroo.Payments.Specs.SigningKey.For.Bdd.Tests",
-                    ["OutboxProcessing:PollingInterval"] = "00:00:01",
-                    ["OutboxProcessing:BatchSize"] = "20",
                     ["Payments:ApprovalLimit"] = "1000.00",
                     ["ConnectionStrings:Database"] = dbConnectionString,
                     ["RabbitMq:Host"] = brokerHost,

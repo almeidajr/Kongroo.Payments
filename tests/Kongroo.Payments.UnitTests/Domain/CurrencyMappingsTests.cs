@@ -9,13 +9,13 @@ public sealed class CurrencyMappingsTests
     [InlineData(Currency.Brl, "BRL")]
     [InlineData(Currency.Eur, "EUR")]
     [InlineData(Currency.Usd, "USD")]
-    public void ToCode_ReturnsIsoCode(Currency currency, string expected) =>
+    public void ToCode_WithDefinedCurrency_ShouldReturnIsoCode(Currency currency, string expected) =>
         CurrencyMappings.ToCode(currency).ShouldBe(expected);
 
     [Theory]
     [InlineData("BRL", Currency.Brl)]
     [InlineData("EUR", Currency.Eur)]
     [InlineData("USD", Currency.Usd)]
-    public void FromCode_ReturnsCurrency(string code, Currency expected) =>
+    public void FromCode_WithIsoCode_ShouldReturnCurrency(string code, Currency expected) =>
         CurrencyMappings.FromCode(code).ShouldBe(expected);
 }

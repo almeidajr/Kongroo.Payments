@@ -1,11 +1,8 @@
 using System.ComponentModel;
 using System.Security.Claims;
-using Kongroo.BuildingBlocks.Presentation.Authorization;
 using Kongroo.Payments.Application;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using Kongroo.Payments.Presentation.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing;
 
 namespace Kongroo.Payments.Presentation;
 

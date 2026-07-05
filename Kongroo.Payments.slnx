@@ -1,8 +1,11 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Kongroo.BuildingBlocks/Kongroo.BuildingBlocks.csproj" />
+    <Project
+      Path="src/Kongroo.Catalog.Contracts/Kongroo.Catalog.Contracts.csproj"
+      Id="43196047-50df-442f-b0a9-dc17ea7f1c9e"
+    />
+    <Project Path="src/Kongroo.Payments.Contracts/Kongroo.Payments.Contracts.csproj" />
     <Project Path="src/Kongroo.Payments/Kongroo.Payments.csproj" />
-    <Project Path="src/Kongroo.Payments.Api/Kongroo.Payments.Api.csproj" />
   </Folder>
 
   <Folder Name="/tests/">

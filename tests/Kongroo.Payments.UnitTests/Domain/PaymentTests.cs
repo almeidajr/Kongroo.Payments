@@ -19,7 +19,7 @@ public sealed class PaymentTests
         Payment.ForOrder(AnyOrder, AnyCustomer, "grace@example.com", "Grace Hopper", Money.From(100m, Currency.Brl));
 
     [Fact]
-    public void ForOrder_CreatesPendingPayment()
+    public void ForOrder_WithValidValues_ShouldCreatePendingPayment()
     {
         var payment = NewPending();
 
@@ -30,7 +30,7 @@ public sealed class PaymentTests
     }
 
     [Fact]
-    public void Process_WhenPolicyApproves_SetsApprovedAndRaisesEvent()
+    public void Process_WhenPolicyApproves_ShouldSetApprovedAndRaiseEvent()
     {
         var payment = NewPending();
 
@@ -50,7 +50,7 @@ public sealed class PaymentTests
     }
 
     [Fact]
-    public void Process_WhenPolicyRejects_SetsRejectedAndRaisesEvent()
+    public void Process_WhenPolicyRejects_ShouldSetRejectedAndRaiseEvent()
     {
         var payment = NewPending();
 
@@ -62,7 +62,7 @@ public sealed class PaymentTests
     }
 
     [Fact]
-    public void Process_WhenAlreadyProcessed_Throws()
+    public void Process_WhenAlreadyProcessed_ShouldThrowConflictException()
     {
         var payment = NewPending();
         payment.Process(new FixedPolicy(approved: true), ProcessedAt);
@@ -76,7 +76,7 @@ public sealed class PaymentTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ForOrder_WhenEmailIsNullOrWhiteSpace_Throws(string? email)
+    public void ForOrder_WhenEmailIsNullOrWhiteSpace_ShouldThrowArgumentException(string? email)
     {
         var act = () => Payment.ForOrder(AnyOrder, AnyCustomer, email!, "Grace Hopper", Money.From(100m, Currency.Brl));
 
@@ -87,7 +87,7 @@ public sealed class PaymentTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ForOrder_WhenCustomerNameIsNullOrWhiteSpace_Throws(string? customerName)
+    public void ForOrder_WhenCustomerNameIsNullOrWhiteSpace_ShouldThrowArgumentException(string? customerName)
     {
         var act = () =>
             Payment.ForOrder(AnyOrder, AnyCustomer, "grace@example.com", customerName!, Money.From(100m, Currency.Brl));

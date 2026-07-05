@@ -25,8 +25,6 @@ public sealed class PaymentsApiFactory(string brokerHost, int brokerPort, string
                     ["Jwt:Issuer"] = Issuer,
                     ["Jwt:Audience"] = Audience,
                     ["Jwt:SigningKey"] = SigningKey,
-                    ["OutboxProcessing:PollingInterval"] = "00:00:01",
-                    ["OutboxProcessing:BatchSize"] = "20",
                     ["Payments:ApprovalLimit"] = "1000.00",
                     ["ConnectionStrings:Database"] = dbConnectionString,
                     ["RabbitMq:Host"] = brokerHost,

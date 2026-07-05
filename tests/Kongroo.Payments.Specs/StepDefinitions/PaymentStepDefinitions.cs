@@ -1,4 +1,4 @@
-using Kongroo.BuildingBlocks.Contracts;
+using Kongroo.Catalog.Contracts;
 using Kongroo.Payments.Specs.Support;
 using Reqnroll;
 using Shouldly;

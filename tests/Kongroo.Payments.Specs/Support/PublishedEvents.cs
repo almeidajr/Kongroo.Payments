@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Kongroo.BuildingBlocks.Contracts;
+using Kongroo.Payments.Contracts;
 
 namespace Kongroo.Payments.Specs.Support;
 

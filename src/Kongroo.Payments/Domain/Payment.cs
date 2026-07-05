@@ -3,7 +3,7 @@ using Kongroo.BuildingBlocks.Domain.Exceptions;
 
 namespace Kongroo.Payments.Domain;
 
-public sealed class Payment : Entity<PaymentId>
+public sealed class Payment : AggregateRoot<PaymentId>
 {
     private Payment() { }
 

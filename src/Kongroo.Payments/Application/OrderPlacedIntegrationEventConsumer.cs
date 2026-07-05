@@ -1,4 +1,4 @@
-using Kongroo.BuildingBlocks.Contracts;
+using Kongroo.Catalog.Contracts;
 using MassTransit;
 
 namespace Kongroo.Payments.Application;

@@ -1,10 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
 WORKDIR /src
 COPY . .
-RUN dotnet restore src/Kongroo.Payments.Api --locked-mode
+RUN dotnet restore src/Kongroo.Payments --locked-mode
 
 FROM restore AS build
-RUN dotnet publish src/Kongroo.Payments.Api \
+RUN dotnet publish src/Kongroo.Payments \
     -c Release \
     -o /app/publish \
     --no-restore
@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=build --chown=kongroo:kongroo /app/publish .
 USER kongroo
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "Kongroo.Payments.Api.dll"]
+ENTRYPOINT ["dotnet", "Kongroo.Payments.dll"]

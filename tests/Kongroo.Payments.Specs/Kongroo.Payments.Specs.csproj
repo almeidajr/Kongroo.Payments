@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Kongroo.Payments.Api\Kongroo.Payments.Api.csproj" />
+    <ProjectReference Include="..\..\src\Kongroo.Payments\Kongroo.Payments.csproj" />
   </ItemGroup>
 </Project>

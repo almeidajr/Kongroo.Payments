@@ -60,8 +60,6 @@ nested configuration sections.
 | `Jwt__Audience` | JWT audience (must match the Identity service) |
 | `Jwt__SigningKey` | JWT signing key (min 32 chars, must match the Identity service) |
 | `Jwt__AccessTokenLifetimeMinutes` | Access token lifetime in minutes |
-| `OutboxProcessing__PollingInterval` | Outbox poll interval (e.g. `00:00:05`) |
-| `OutboxProcessing__BatchSize` | Outbox messages processed per poll |
 
 This service validates tokens it did not issue; `Jwt__Issuer`, `Jwt__Audience`,
 and `Jwt__SigningKey` must match the Kongroo Identity service exactly.

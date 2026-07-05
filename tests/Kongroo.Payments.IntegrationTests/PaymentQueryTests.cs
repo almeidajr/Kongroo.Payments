@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Kongroo.BuildingBlocks.Contracts;
+using Kongroo.Catalog.Contracts;
 using Kongroo.Payments.Application;
 using Kongroo.Payments.Domain;
 using Kongroo.Payments.Infrastructure;
@@ -17,7 +17,7 @@ namespace Kongroo.Payments.IntegrationTests;
 public sealed class PaymentQueryTests(PaymentsFixture fixture)
 {
     [Fact]
-    public async Task GetPaymentByOrderId_ReturnsCallersPayment()
+    public async Task GetPaymentByOrderId_WithCallerPayment_ShouldReturnCallersPayment()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new PaymentsApiFactory(
@@ -64,7 +64,7 @@ public sealed class PaymentQueryTests(PaymentsFixture fixture)
     }
 
     [Fact]
-    public async Task GetPaymentByOrderId_ForOtherCustomer_ReturnsNotFound()
+    public async Task GetPaymentByOrderId_WhenPaymentBelongsToOtherCustomer_ShouldReturnNotFound()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new PaymentsApiFactory(

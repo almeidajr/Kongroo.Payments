@@ -8,7 +8,7 @@ namespace Kongroo.Payments.IntegrationTests;
 public sealed class HealthEndpointTests(PaymentsFixture fixture)
 {
     [Fact]
-    public async Task GetHealth_ShouldReturnOk()
+    public async Task GetAsync_WithHealthEndpoint_ShouldReturnOk()
     {
         await using var factory = new PaymentsApiFactory(
             fixture.BrokerHost,
@@ -24,7 +24,7 @@ public sealed class HealthEndpointTests(PaymentsFixture fixture)
     }
 
     [Fact]
-    public async Task GetOpenApiDocument_InDevelopment_ShouldReturnOk()
+    public async Task GetAsync_WithOpenApiDocumentInDevelopment_ShouldReturnOk()
     {
         await using var factory = new PaymentsApiFactory(
             fixture.BrokerHost,

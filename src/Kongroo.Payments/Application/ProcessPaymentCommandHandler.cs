@@ -1,3 +1,4 @@
+using Kongroo.BuildingBlocks.Application;
 using Kongroo.Payments.Domain;
 using Kongroo.Payments.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,8 @@ namespace Kongroo.Payments.Application;
 public sealed class ProcessPaymentCommandHandler(
     PaymentsDbContext context,
     IPaymentApprovalPolicy policy,
-    TimeProvider timeProvider
+    TimeProvider timeProvider,
+    IUnitOfWork unitOfWork
 )
 {
     public async Task HandleAsync(ProcessPaymentCommand command, CancellationToken cancellationToken)
@@ -37,6 +39,6 @@ public sealed class ProcessPaymentCommandHandler(
         payment.Process(policy, timeProvider.GetUtcNow());
 
         context.Payments.Add(payment);
-        await context.SaveChangesAsync(cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
     }
 }

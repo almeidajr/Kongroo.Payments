@@ -1,4 +1,5 @@
-using Kongroo.BuildingBlocks.Contracts;
+using Kongroo.Catalog.Contracts;
+using Kongroo.Payments.Contracts;
 using Kongroo.Payments.Domain;
 using Kongroo.Payments.Infrastructure;
 using Kongroo.Payments.IntegrationTests.Support;
@@ -15,7 +16,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
     [Theory]
     [InlineData(500.00, true, "Approved")]
     [InlineData(1500.00, false, "Rejected")]
-    public async Task OrderPlaced_ProcessesPaymentAndPublishesResult(
+    public async Task Consume_WithOrderPlacedEvent_ShouldProcessPaymentAndPublishResult(
         decimal amount,
         bool expectedApproved,
         string expectedStatus
@@ -59,9 +60,22 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
         published.Email.ShouldBe("grace@example.com");
         published.Approved.ShouldBe(expectedApproved);
 
-        using var scope = factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<PaymentsDbContext>();
-        var persisted = await context.Payments.SingleAsync(
+        await TestPolling.WaitUntilAsync(
+            async () =>
+            {
+                using var scope = factory.Services.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<PaymentsDbContext>();
+                return await context.Payments.AnyAsync(
+                    payment => payment.OrderId == OrderId.From(orderId),
+                    cancellationToken
+                );
+            },
+            cancellationToken
+        );
+
+        using var verifyScope = factory.Services.CreateScope();
+        var verifyContext = verifyScope.ServiceProvider.GetRequiredService<PaymentsDbContext>();
+        var persisted = await verifyContext.Payments.SingleAsync(
             payment => payment.OrderId == OrderId.From(orderId),
             cancellationToken
         );
@@ -71,7 +85,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
     }
 
     [Fact]
-    public async Task DuplicateOrderPlaced_CreatesSinglePayment()
+    public async Task Consume_WhenOrderPlacedEventIsDuplicated_ShouldCreateSinglePayment()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new PaymentsApiFactory(
@@ -97,7 +111,6 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
         await bus.Publish(message, cancellationToken);
         await bus.Publish(message, cancellationToken);
 
-        // Wait until at least one payment row exists, then confirm the duplicate did not create a second.
         await TestPolling.WaitUntilAsync(
             async () =>
             {

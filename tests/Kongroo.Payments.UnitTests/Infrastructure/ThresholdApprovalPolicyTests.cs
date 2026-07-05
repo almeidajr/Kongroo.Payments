@@ -10,15 +10,10 @@ public sealed class ThresholdApprovalPolicyTests
     private static ThresholdApprovalPolicy PolicyWithLimit(decimal limit) =>
         new(Options.Create(new PaymentApprovalOptions { ApprovalLimit = limit }));
 
-    [Fact]
-    public void IsApproved_WhenAmountBelowLimit_ReturnsTrue() =>
-        PolicyWithLimit(1000m).IsApproved(Money.From(999.99m, Currency.Brl)).ShouldBeTrue();
-
-    [Fact]
-    public void IsApproved_WhenAmountEqualsLimit_ReturnsTrue() =>
-        PolicyWithLimit(1000m).IsApproved(Money.From(1000m, Currency.Brl)).ShouldBeTrue();
-
-    [Fact]
-    public void IsApproved_WhenAmountAboveLimit_ReturnsFalse() =>
-        PolicyWithLimit(1000m).IsApproved(Money.From(1000.01m, Currency.Brl)).ShouldBeFalse();
+    [Theory]
+    [InlineData(999.99, true)]
+    [InlineData(1000, true)]
+    [InlineData(1000.01, false)]
+    public void IsApproved_WithConfiguredLimit_ShouldReturnApprovalDecision(decimal amount, bool expected) =>
+        PolicyWithLimit(1000m).IsApproved(Money.From(amount, Currency.Brl)).ShouldBe(expected);
 }

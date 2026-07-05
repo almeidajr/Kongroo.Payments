@@ -1,5 +1,5 @@
-using Kongroo.BuildingBlocks.Contracts;
 using Kongroo.Payments.Application;
+using Kongroo.Payments.Contracts;
 using Kongroo.Payments.Domain;
 using MassTransit;
 using NSubstitute;
@@ -9,7 +9,7 @@ namespace Kongroo.Payments.UnitTests.Application;
 public sealed class PaymentProcessedDomainEventHandlerTests
 {
     [Fact]
-    public async Task HandleAsync_PublishesIntegrationEventMappedFromDomainEvent()
+    public async Task HandleAsync_WithPaymentProcessedDomainEvent_ShouldPublishIntegrationEventWithMappedFields()
     {
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
         var handler = new PaymentProcessedDomainEventHandler(publishEndpoint);
