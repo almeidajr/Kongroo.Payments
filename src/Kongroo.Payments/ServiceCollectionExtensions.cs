@@ -56,7 +56,7 @@ public static class ServiceCollectionExtensions
                 .ValidateOnStart();
             services.AddMassTransit(busRegistration =>
             {
-                busRegistration.SetKebabCaseEndpointNameFormatter();
+                busRegistration.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("payments", false));
 
                 busRegistration.AddEntityFrameworkOutbox<PaymentsDbContext>(outbox =>
                 {

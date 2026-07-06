@@ -50,15 +50,24 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
         var orderId = Guid.CreateVersion7();
         var customerId = Guid.CreateVersion7();
         await bus.Publish(
-            new OrderPlacedIntegrationEvent(orderId, customerId, "grace@example.com", "Grace Hopper", amount, "BRL"),
+            new OrderPlacedIntegrationEvent(
+                orderId,
+                customerId,
+                "grace@example.com",
+                "Grace Hopper",
+                amount,
+                "BRL",
+                [new OrderPlacedLine(Guid.CreateVersion7(), amount)]
+            ),
             cancellationToken
         );
 
         var published = await received.Task.WaitAsync(TimeSpan.FromSeconds(60), cancellationToken);
+        published.PaymentId.ShouldNotBe(Guid.Empty);
         published.OrderId.ShouldBe(orderId);
-        published.UserId.ShouldBe(customerId);
-        published.Email.ShouldBe("grace@example.com");
-        published.Approved.ShouldBe(expectedApproved);
+        published.CustomerId.ShouldBe(customerId);
+        published.CustomerEmail.ShouldBe("grace@example.com");
+        published.IsApproved.ShouldBe(expectedApproved);
 
         await TestPolling.WaitUntilAsync(
             async () =>
@@ -105,7 +114,8 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
             "grace@example.com",
             "Grace Hopper",
             250.00m,
-            "BRL"
+            "BRL",
+            [new OrderPlacedLine(Guid.CreateVersion7(), 250.00m)]
         );
 
         await bus.Publish(message, cancellationToken);

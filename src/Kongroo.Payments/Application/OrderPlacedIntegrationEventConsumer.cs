@@ -3,7 +3,6 @@ using MassTransit;
 
 namespace Kongroo.Payments.Application;
 
-/// <summary>Processes a payment when an order is placed.</summary>
 public sealed class OrderPlacedIntegrationEventConsumer(ProcessPaymentCommandHandler handler)
     : IConsumer<OrderPlacedIntegrationEvent>
 {
@@ -15,9 +14,9 @@ public sealed class OrderPlacedIntegrationEventConsumer(ProcessPaymentCommandHan
             new ProcessPaymentCommand(
                 message.OrderId,
                 message.CustomerId,
-                message.Email,
+                message.CustomerEmail,
                 message.CustomerName,
-                message.Amount,
+                message.TotalAmount,
                 message.Currency
             ),
             context.CancellationToken

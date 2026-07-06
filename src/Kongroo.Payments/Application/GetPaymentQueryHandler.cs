@@ -17,7 +17,6 @@ public sealed class GetPaymentQueryHandler(PaymentsDbContext context)
             await context.Payments.SingleOrDefaultAsync(candidate => candidate.OrderId == orderId, cancellationToken)
             ?? throw new NotFoundException(nameof(Payment), $"order '{query.OrderId}'");
 
-        // Non-admins may only see their own payments; report "not found" rather than leak existence.
         if (!query.CallerIsAdmin && payment.CustomerId != CustomerId.From(query.CallerId))
         {
             throw new NotFoundException(nameof(Payment), $"order '{query.OrderId}'");

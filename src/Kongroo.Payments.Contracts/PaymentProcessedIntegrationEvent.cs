@@ -3,12 +3,13 @@ using Kongroo.BuildingBlocks.Application;
 namespace Kongroo.Payments.Contracts;
 
 public sealed record PaymentProcessedIntegrationEvent(
+    Guid PaymentId,
     Guid OrderId,
-    Guid UserId,
-    string Email,
+    Guid CustomerId,
+    string CustomerEmail,
     string CustomerName,
-    decimal Amount,
+    decimal TotalAmount,
     string Currency,
-    bool Approved,
+    bool IsApproved,
     DateTimeOffset ProcessedAt
 ) : IntegrationEvent;

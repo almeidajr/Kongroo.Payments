@@ -19,6 +19,10 @@ via RabbitMQ.
 The service consumes `OrderPlacedIntegrationEvent` and publishes `PaymentProcessedIntegrationEvent`
 (`Approved` / `Rejected`) via RabbitMQ. Migrations are applied automatically on startup in all environments (warning logged when not Development).
 
+The consumed order event includes customer and line-level game details (`CustomerId`,
+`Lines[].GameId`, `Lines[].UnitPrice`) for challenge traceability. Payments currently
+uses the order total for approval and persists the payment by order and customer id.
+
 ## Running Locally
 
 ```bash

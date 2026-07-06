@@ -32,7 +32,15 @@ public sealed class PaymentQueryTests(PaymentsFixture fixture)
         var orderId = Guid.CreateVersion7();
         var customerId = Guid.CreateVersion7();
         await bus.Publish(
-            new OrderPlacedIntegrationEvent(orderId, customerId, "ada@example.com", "Ada Lovelace", 42.00m, "USD"),
+            new OrderPlacedIntegrationEvent(
+                orderId,
+                customerId,
+                "ada@example.com",
+                "Ada Lovelace",
+                42.00m,
+                "USD",
+                [new OrderPlacedLine(Guid.CreateVersion7(), 42.00m)]
+            ),
             cancellationToken
         );
 
@@ -79,7 +87,15 @@ public sealed class PaymentQueryTests(PaymentsFixture fixture)
         var orderId = Guid.CreateVersion7();
         var ownerId = Guid.CreateVersion7();
         await bus.Publish(
-            new OrderPlacedIntegrationEvent(orderId, ownerId, "ada@example.com", "Ada Lovelace", 42.00m, "USD"),
+            new OrderPlacedIntegrationEvent(
+                orderId,
+                ownerId,
+                "ada@example.com",
+                "Ada Lovelace",
+                42.00m,
+                "USD",
+                [new OrderPlacedLine(Guid.CreateVersion7(), 42.00m)]
+            ),
             cancellationToken
         );
 

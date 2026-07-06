@@ -17,8 +17,9 @@ public sealed class PaymentProcessedDomainEventHandlerTests
         var orderId = Guid.CreateVersion7();
         var customerId = Guid.CreateVersion7();
         var processedAt = new DateTimeOffset(2026, 6, 20, 12, 0, 0, TimeSpan.Zero);
+        var paymentId = PaymentId.Create();
         var domainEvent = new PaymentProcessedDomainEvent(
-            PaymentId.Create(),
+            paymentId,
             OrderId.From(orderId),
             CustomerId.From(customerId),
             "grace@example.com",
@@ -34,13 +35,14 @@ public sealed class PaymentProcessedDomainEventHandlerTests
             .Received(1)
             .Publish(
                 Arg.Is<PaymentProcessedIntegrationEvent>(integrationEvent =>
-                    integrationEvent.OrderId == orderId
-                    && integrationEvent.UserId == customerId
-                    && integrationEvent.Email == "grace@example.com"
+                    integrationEvent.PaymentId == paymentId.Value
+                    && integrationEvent.OrderId == orderId
+                    && integrationEvent.CustomerId == customerId
+                    && integrationEvent.CustomerEmail == "grace@example.com"
                     && integrationEvent.CustomerName == "Grace Hopper"
-                    && integrationEvent.Amount == 59.90m
+                    && integrationEvent.TotalAmount == 59.90m
                     && integrationEvent.Currency == "BRL"
-                    && integrationEvent.Approved
+                    && integrationEvent.IsApproved
                     && integrationEvent.ProcessedAt == processedAt
                 ),
                 Arg.Any<CancellationToken>()

@@ -15,7 +15,15 @@ public sealed class PaymentStepDefinitions
     {
         _orderId = Guid.CreateVersion7();
         await SpecsEnvironment.Bus.Publish(
-            new OrderPlacedIntegrationEvent(_orderId, Guid.CreateVersion7(), email, "Grace Hopper", amount, currency)
+            new OrderPlacedIntegrationEvent(
+                _orderId,
+                Guid.CreateVersion7(),
+                email,
+                "Grace Hopper",
+                amount,
+                currency,
+                [new OrderPlacedLine(Guid.CreateVersion7(), amount)]
+            )
         );
     }
 
@@ -27,7 +35,7 @@ public sealed class PaymentStepDefinitions
         await WaitUntilAsync(() => PublishedEvents.PaymentProcessed.Any(processed => processed.OrderId == _orderId));
 
         var published = PublishedEvents.PaymentProcessed.Single(processed => processed.OrderId == _orderId);
-        published.Approved.ShouldBe(expectedApproved);
+        published.IsApproved.ShouldBe(expectedApproved);
     }
 
     private static async Task WaitUntilAsync(Func<bool> condition)

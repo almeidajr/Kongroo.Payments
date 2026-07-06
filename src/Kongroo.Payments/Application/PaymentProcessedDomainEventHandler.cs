@@ -14,6 +14,7 @@ public sealed class PaymentProcessedDomainEventHandler(IPublishEndpoint publishE
     ) =>
         await publishEndpoint.Publish(
             new PaymentProcessedIntegrationEvent(
+                domainEvent.PaymentId.Value,
                 domainEvent.OrderId.Value,
                 domainEvent.CustomerId.Value,
                 domainEvent.Email,

@@ -18,7 +18,6 @@ public sealed class ProcessPaymentCommandHandler(
 
         var orderId = OrderId.From(command.OrderId);
 
-        // Idempotency: a redelivered OrderPlaced event must not create a second payment.
         var alreadyProcessed = await context.Payments.AnyAsync(
             payment => payment.OrderId == orderId,
             cancellationToken
