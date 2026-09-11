@@ -9,9 +9,12 @@ using Kongroo.Payments.Infrastructure;
 using Kongroo.Payments.Presentation;
 using Kongroo.Payments.Presentation.Authorization;
 using Kongroo.Payments.Presentation.OpenApi;
+using MassTransit.Monitoring;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -81,6 +84,18 @@ builder
     .Services.AddAuthorizationBuilder()
     .AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole("Admin"));
 
+builder
+    .Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
+    .WithMetrics(static metrics =>
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddMeter(InstrumentationOptions.MeterName)
+            .AddPrometheusExporter()
+    );
+
 builder.Services.AddPaymentsModule(builder.Configuration);
 
 var app = builder.Build();
@@ -95,6 +110,7 @@ app.MapHealthChecks("health", new HealthCheckOptions { ResponseWriter = UIRespon
 app.MapHealthChecks("health/live", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 app.MapPaymentEndpoints();
+app.MapPrometheusScrapingEndpoint();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
