@@ -1,6 +1,8 @@
 using Kongroo.BuildingBlocks.Application;
 using Kongroo.BuildingBlocks.Infrastructure;
+using Kongroo.Catalog.Contracts;
 using Kongroo.Payments.Application;
+using Kongroo.Payments.Contracts;
 using Kongroo.Payments.Domain;
 using Kongroo.Payments.Infrastructure;
 using MassTransit;
@@ -49,11 +51,22 @@ public static class ServiceCollectionExtensions
                 .ValidateOnStart();
             services.AddSingleton<IPaymentApprovalPolicy, ThresholdApprovalPolicy>();
 
-            services
-                .AddOptions<RabbitMqTransportOptions>()
-                .Bind(configuration.GetRequiredSection("RabbitMq"))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+            services.AddMessaging(configuration);
+        }
+
+        private void AddMessaging(IConfiguration configuration)
+        {
+            var transport = configuration.GetValue("Messaging:Transport", MessagingTransport.RabbitMq);
+
+            if (transport == MessagingTransport.RabbitMq)
+            {
+                services
+                    .AddOptions<RabbitMqTransportOptions>()
+                    .Bind(configuration.GetRequiredSection("RabbitMq"))
+                    .ValidateDataAnnotations()
+                    .ValidateOnStart();
+            }
+
             services.AddMassTransit(busRegistration =>
             {
                 busRegistration.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("payments"));
@@ -66,7 +79,37 @@ public static class ServiceCollectionExtensions
                 });
 
                 busRegistration.AddConsumer<OrderPlacedIntegrationEventConsumer>();
-                busRegistration.UsingRabbitMq((context, busFactory) => busFactory.ConfigureEndpoints(context));
+
+                if (transport == MessagingTransport.AmazonSqs)
+                {
+                    var region = configuration.GetValue<string>("Aws:Region");
+                    if (string.IsNullOrWhiteSpace(region))
+                    {
+                        throw new InvalidOperationException(
+                            "Configuration value 'Aws:Region' is required when Messaging:Transport is AmazonSqs."
+                        );
+                    }
+
+                    busRegistration.UsingAmazonSqs(
+                        (context, busFactory) =>
+                        {
+                            // Credentials come from the AWS SDK default chain (AWS_ACCESS_KEY_ID,
+                            // AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN) — nothing to configure here.
+                            busFactory.Host(region, static _ => { });
+                            busFactory.Message<OrderPlacedIntegrationEvent>(static message =>
+                                message.SetEntityName(MessagingTopics.OrderPlaced)
+                            );
+                            busFactory.Message<PaymentProcessedIntegrationEvent>(static message =>
+                                message.SetEntityName(MessagingTopics.PaymentProcessed)
+                            );
+                            busFactory.ConfigureEndpoints(context);
+                        }
+                    );
+                }
+                else
+                {
+                    busRegistration.UsingRabbitMq((context, busFactory) => busFactory.ConfigureEndpoints(context));
+                }
             });
         }
     }
