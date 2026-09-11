@@ -2,7 +2,8 @@
 
 Payment processing microservice for FIAP Cloud Games. Consumes `OrderPlacedIntegrationEvent`
 from `Kongroo.Catalog` and publishes `PaymentProcessedIntegrationEvent` (`Approved` / `Rejected`)
-via RabbitMQ.
+over MassTransit — RabbitMQ by default (Docker Compose, tests) or Amazon SQS/SNS in Kubernetes, selected
+by `Messaging__Transport`.
 
 ## Environment variables
 
@@ -20,7 +21,10 @@ via RabbitMQ.
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_SESSION_TOKEN` | AWS SDK default credential chain (Secret `aws-credentials`) | Learner Lab session values |
 
 The service consumes `OrderPlacedIntegrationEvent` and publishes `PaymentProcessedIntegrationEvent`
-(`Approved` / `Rejected`) via RabbitMQ. Migrations are applied automatically on startup in all environments (warning logged when not Development).
+(`Approved` / `Rejected`) over the configured transport. The Kubernetes manifests default to
+`Messaging__Transport=AmazonSqs`, so the pod only becomes Ready once the `aws-credentials` Secret (shipped and
+refreshed by Kongroo.Orchestration) holds live Learner Lab credentials; set `Messaging__Transport=RabbitMq`
+in the ConfigMap to run the cluster against RabbitMQ instead. Migrations are applied automatically on startup in all environments (warning logged when not Development).
 
 The consumed order event includes customer and line-level game details (`CustomerId`,
 `Lines[].GameId`, `Lines[].UnitPrice`) for challenge traceability. Payments currently
