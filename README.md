@@ -5,6 +5,25 @@ from `Kongroo.Catalog` and publishes `PaymentProcessedIntegrationEvent` (`Approv
 over MassTransit — RabbitMQ by default (Docker Compose, tests) or Amazon SQS/SNS in Kubernetes, selected
 by `Messaging__Transport`.
 
+```mermaid
+flowchart LR
+    placed{{kongroo-order-placed}} -.->|OrderPlacedIntegrationEvent| payments[Payments API]
+    payments --> policy{"Total ≤ ApprovalLimit?"}
+    policy -->|yes| approved[Approved]
+    policy -->|no| rejected[Rejected]
+    approved -.-> processed{{kongroo-payment-processed}}
+    rejected -.-> processed
+    processed -.-> catalog[Catalog API]
+    processed -.-> lambda[[Notifications Lambda]]
+```
+
+## Endpoints
+
+- `GET /` — List the caller's payments (Admin may pass `?customerId=`)
+- `GET /{orderId}` — Get the payment for an order
+- `GET /health` — Health check
+- `GET /metrics` — Prometheus metrics
+
 ## Environment variables
 
 | Variable                                            | Purpose                                                           | Example                                                                 |
@@ -44,6 +63,15 @@ route and status, HttpClient, .NET runtime, MassTransit publish/consume counters
 
 ```bash
 dotnet run --project src/Kongroo.Payments
+```
+
+## Running Tests
+
+Requires Docker — integration tests and BDD specs spin up PostgreSQL and RabbitMQ via Testcontainers.
+Unit tests need no Docker.
+
+```bash
+dotnet test
 ```
 
 ## Docker
