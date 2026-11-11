@@ -20,12 +20,7 @@ public sealed class PaymentQueryTests(PaymentsFixture fixture)
     public async Task GetPaymentByOrderId_WithCallerPayment_ShouldReturnCallersPayment()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
         await TestPolling.WaitForHealthyAsync(client, cancellationToken);
 
@@ -76,12 +71,7 @@ public sealed class PaymentQueryTests(PaymentsFixture fixture)
     public async Task GetPaymentByOrderId_WhenPaymentBelongsToOtherCustomer_ShouldReturnNotFound()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
         await TestPolling.WaitForHealthyAsync(client, cancellationToken);
 

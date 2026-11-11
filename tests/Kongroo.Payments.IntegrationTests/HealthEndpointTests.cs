@@ -10,12 +10,7 @@ public sealed class HealthEndpointTests(PaymentsFixture fixture)
     [Fact]
     public async Task GetAsync_WithHealthEndpoint_ShouldReturnOk()
     {
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
 
         await TestPolling.WaitForHealthyAsync(client, TestContext.Current.CancellationToken);
@@ -27,12 +22,7 @@ public sealed class HealthEndpointTests(PaymentsFixture fixture)
     [Fact]
     public async Task GetAsync_WithOpenApiDocumentInDevelopment_ShouldReturnOk()
     {
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
         await TestPolling.WaitForHealthyAsync(client, TestContext.Current.CancellationToken);
 

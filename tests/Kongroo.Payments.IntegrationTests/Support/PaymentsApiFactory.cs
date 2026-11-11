@@ -7,12 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kongroo.Payments.IntegrationTests.Support;
 
-public sealed class PaymentsApiFactory(
-    string brokerHost,
-    int brokerPort,
-    string brokerPassword,
-    string dbConnectionString
-) : WebApplicationFactory<Program>
+public sealed class PaymentsApiFactory(PaymentsFixture fixture) : WebApplicationFactory<Program>
 {
     public const string Issuer = "Kongroo.Payments.IntegrationTests";
     public const string Audience = "Kongroo.Payments.IntegrationTests";
@@ -31,11 +26,11 @@ public sealed class PaymentsApiFactory(
                     ["Jwt:Audience"] = Audience,
                     ["Jwt:SigningKey"] = SigningKey,
                     ["Payments:ApprovalLimit"] = "1000.00",
-                    ["ConnectionStrings:Database"] = dbConnectionString,
-                    ["RabbitMq:Host"] = brokerHost,
-                    ["RabbitMq:Port"] = brokerPort.ToString(CultureInfo.InvariantCulture),
+                    ["ConnectionStrings:Database"] = fixture.DbConnectionString,
+                    ["RabbitMq:Host"] = fixture.BrokerHost,
+                    ["RabbitMq:Port"] = fixture.BrokerPort.ToString(CultureInfo.InvariantCulture),
                     ["RabbitMq:User"] = PaymentsFixture.BrokerUsername,
-                    ["RabbitMq:Pass"] = brokerPassword,
+                    ["RabbitMq:Pass"] = PaymentsFixture.BrokerPassword,
                 };
 
                 configurationBuilder.AddInMemoryCollection(testConfiguration);

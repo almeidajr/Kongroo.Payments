@@ -23,12 +23,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
     )
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
         await TestPolling.WaitForHealthyAsync(client, cancellationToken);
 
@@ -98,12 +93,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
     public async Task Consume_WhenOrderPlacedEventIsDuplicated_ShouldCreateSinglePayment()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        await using var factory = new PaymentsApiFactory(
-            fixture.BrokerHost,
-            fixture.BrokerPort,
-            fixture.BrokerPassword,
-            fixture.DbConnectionString
-        );
+        await using var factory = new PaymentsApiFactory(fixture);
         using var client = factory.CreateClient();
         await TestPolling.WaitForHealthyAsync(client, cancellationToken);
 
