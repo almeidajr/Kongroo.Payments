@@ -1,5 +1,7 @@
 # <img alt="Kongroo" src="./logo.png" width="40"/> Kongroo.Payments
 
+[![CI/CD](https://github.com/almeidajr/Kongroo.Payments/actions/workflows/ci-cd.yml/badge.svg?branch=master)](https://github.com/almeidajr/Kongroo.Payments/actions/workflows/ci-cd.yml)
+
 Payment processing microservice for FIAP Cloud Games. Consumes `OrderPlacedIntegrationEvent`
 from `Kongroo.Catalog` and publishes `PaymentProcessedIntegrationEvent` (`Approved` / `Rejected`)
 over MassTransit — RabbitMQ by default (Docker Compose, tests) or Amazon SQS/SNS in Kubernetes, selected
