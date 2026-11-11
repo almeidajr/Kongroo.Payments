@@ -26,6 +26,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
         await using var factory = new PaymentsApiFactory(
             fixture.BrokerHost,
             fixture.BrokerPort,
+            fixture.BrokerPassword,
             fixture.DbConnectionString
         );
         using var client = factory.CreateClient();
@@ -100,6 +101,7 @@ public sealed class PaymentProcessingTests(PaymentsFixture fixture)
         await using var factory = new PaymentsApiFactory(
             fixture.BrokerHost,
             fixture.BrokerPort,
+            fixture.BrokerPassword,
             fixture.DbConnectionString
         );
         using var client = factory.CreateClient();

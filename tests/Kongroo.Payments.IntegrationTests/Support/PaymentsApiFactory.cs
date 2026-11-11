@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -6,12 +7,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Kongroo.Payments.IntegrationTests.Support;
 
-public sealed class PaymentsApiFactory(string brokerHost, int brokerPort, string dbConnectionString)
-    : WebApplicationFactory<Program>
+public sealed class PaymentsApiFactory(
+    string brokerHost,
+    int brokerPort,
+    string brokerPassword,
+    string dbConnectionString
+) : WebApplicationFactory<Program>
 {
     public const string Issuer = "Kongroo.Payments.IntegrationTests";
     public const string Audience = "Kongroo.Payments.IntegrationTests";
-    public const string SigningKey = "Kongroo.Payments.IntegrationTests.SigningKey.For.Tests";
+    public static readonly string SigningKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -29,8 +34,8 @@ public sealed class PaymentsApiFactory(string brokerHost, int brokerPort, string
                     ["ConnectionStrings:Database"] = dbConnectionString,
                     ["RabbitMq:Host"] = brokerHost,
                     ["RabbitMq:Port"] = brokerPort.ToString(CultureInfo.InvariantCulture),
-                    ["RabbitMq:User"] = "kongroo",
-                    ["RabbitMq:Pass"] = "development",
+                    ["RabbitMq:User"] = PaymentsFixture.BrokerUsername,
+                    ["RabbitMq:Pass"] = brokerPassword,
                 };
 
                 configurationBuilder.AddInMemoryCollection(testConfiguration);

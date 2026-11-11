@@ -1,10 +1,16 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Kongroo.Payments.Specs.Support;
 
-public sealed class KongrooWebApplicationFactory(string brokerHost, int brokerPort, string dbConnectionString)
-    : WebApplicationFactory<Program>
+public sealed class KongrooWebApplicationFactory(
+    string brokerHost,
+    int brokerPort,
+    string brokerUsername,
+    string brokerPassword,
+    string dbConnectionString
+) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -17,13 +23,13 @@ public sealed class KongrooWebApplicationFactory(string brokerHost, int brokerPo
                 {
                     ["Jwt:Issuer"] = "Kongroo.Payments.Specs",
                     ["Jwt:Audience"] = "Kongroo.Payments.Specs",
-                    ["Jwt:SigningKey"] = "Kongroo.Payments.Specs.SigningKey.For.Bdd.Tests",
+                    ["Jwt:SigningKey"] = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
                     ["Payments:ApprovalLimit"] = "1000.00",
                     ["ConnectionStrings:Database"] = dbConnectionString,
                     ["RabbitMq:Host"] = brokerHost,
                     ["RabbitMq:Port"] = brokerPort.ToString(CultureInfo.InvariantCulture),
-                    ["RabbitMq:User"] = "kongroo",
-                    ["RabbitMq:Pass"] = "development",
+                    ["RabbitMq:User"] = brokerUsername,
+                    ["RabbitMq:Pass"] = brokerPassword,
                 };
 
                 configurationBuilder.AddInMemoryCollection(testConfiguration);

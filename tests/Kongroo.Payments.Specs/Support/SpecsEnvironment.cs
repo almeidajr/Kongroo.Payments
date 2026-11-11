@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Kongroo.Payments.Contracts;
 using MassTransit;
 using Testcontainers.PostgreSql;
@@ -7,6 +8,9 @@ namespace Kongroo.Payments.Specs.Support;
 
 public static class SpecsEnvironment
 {
+    private const string BrokerUsername = "kongroo";
+    private static readonly string BrokerPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
+
     private static readonly SemaphoreSlim Gate = new(1, 1);
     private static PostgreSqlContainer? _database;
     private static RabbitMqContainer? _broker;
@@ -33,14 +37,10 @@ public static class SpecsEnvironment
                 return;
             }
 
-            _database = new PostgreSqlBuilder("postgres:18.3")
-                .WithDatabase("kongroo_payments")
-                .WithUsername("kongroo")
-                .WithPassword("development")
-                .Build();
+            _database = new PostgreSqlBuilder("postgres:18.3").WithDatabase("kongroo_payments").Build();
             _broker = new RabbitMqBuilder("rabbitmq:4-management")
-                .WithUsername("kongroo")
-                .WithPassword("development")
+                .WithUsername(BrokerUsername)
+                .WithPassword(BrokerPassword)
                 .Build();
 
             await _database.StartAsync(cancellationToken);
@@ -49,6 +49,8 @@ public static class SpecsEnvironment
             _factory = new KongrooWebApplicationFactory(
                 _broker.Hostname,
                 _broker.GetMappedPublicPort(5672),
+                BrokerUsername,
+                BrokerPassword,
                 _database.GetConnectionString()
             );
 
