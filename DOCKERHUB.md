@@ -24,14 +24,14 @@ messaging broker (RabbitMQ or Amazon SQS/SNS, per `Messaging__Transport`).
 
 ```bash
 docker run -p 8080:8080 \
-  -e ConnectionStrings__Database="Host=postgres;Database=kongroo_payments;Username=kongroo;Password=development" \
+  -e ConnectionStrings__Database="<postgres-connection-string>" \
   -e RabbitMq__Host="rabbitmq" \
   -e RabbitMq__User="kongroo" \
-  -e RabbitMq__Pass="development" \
+  -e RabbitMq__Pass="<rabbitmq-password>" \
   -e Payments__ApprovalLimit="1000.00" \
   -e Jwt__Issuer="Kongroo.Identity.Api" \
   -e Jwt__Audience="Kongroo.Identity.Api" \
-  -e Jwt__SigningKey="<a-secret-key-at-least-32-characters-long>" \
+  -e Jwt__SigningKey="<jwt-signing-key-at-least-32-characters>" \
   josealmeidajr/kongroo-payments:latest
 ```
 

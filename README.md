@@ -29,10 +29,10 @@ flowchart LR
 | Variable                                            | Purpose                                                           | Example                                                                 |
 | --------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `ASPNETCORE_ENVIRONMENT`                            | Runtime environment                                               | `Production`                                                            |
-| `ConnectionStrings__Database`                       | PostgreSQL connection string                                      | `Host=postgres;Database=kongroo_payments;Username=kongroo;Password=...` |
+| `ConnectionStrings__Database`                       | PostgreSQL connection string                                      | `<postgres-connection-string>`                                          |
 | `RabbitMq__Host`                                    | RabbitMQ host (K8s Service name)                                  | `rabbitmq`                                                              |
 | `RabbitMq__User`                                    | RabbitMQ username                                                 | `kongroo`                                                               |
-| `RabbitMq__Pass`                                    | RabbitMQ password                                                 | `...`                                                                   |
+| `RabbitMq__Pass`                                    | RabbitMQ password                                                 | `<rabbitmq-password>`                                                   |
 | `Payments__ApprovalLimit`                           | Payments at or below this amount are approved; above are rejected | `1000.00`                                                               |
 | `Jwt__Issuer` / `Jwt__Audience` / `Jwt__SigningKey` | JWT validation (issued by Identity)                               | —                                                                       |
 | `Messaging__Transport`                              | `RabbitMq` (default, compose/tests) or `AmazonSqs` (k8s)       | `AmazonSqs`  |
@@ -61,7 +61,12 @@ route and status, HttpClient, .NET runtime, MassTransit publish/consume counters
 
 ## Running Locally
 
-```bash
+Generate the local credentials (also sets this API's user-secrets) and start PostgreSQL and RabbitMQ
+from `Kongroo.Orchestration`, then run the service:
+
+```powershell
+./scripts/new-secrets.ps1 -SkipKubernetes   # from Kongroo.Orchestration
+docker compose up postgres rabbitmq -d      # from Kongroo.Orchestration
 dotnet run --project src/Kongroo.Payments
 ```
 
