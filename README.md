@@ -61,8 +61,8 @@ route and status, HttpClient, .NET runtime, MassTransit publish/consume counters
 
 ## Running Locally
 
-Generate the local credentials (also sets this API's user-secrets) and start PostgreSQL and RabbitMQ
-from `Kongroo.Orchestration`, then run the service:
+Generate the local credentials (also sets this API's user-secrets), start PostgreSQL and RabbitMQ,
+then run the service:
 
 ```powershell
 ./scripts/new-secrets.ps1 -SkipKubernetes   # from Kongroo.Orchestration
